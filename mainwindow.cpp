@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     GA tsp;
     tsp.init_races(20,30);
     tsp.debugInitRaces();
+    tsp.tournament(20);
 }
 
 MainWindow::~MainWindow()
