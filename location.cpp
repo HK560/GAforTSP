@@ -17,3 +17,19 @@ void location::qdebugLocation()
     qDebug()<<QString("NUM:%1 X=%2 Y=%3").arg(this->code).arg(this->X).arg(this->Y);
 
 }
+
+int location::getX()
+{
+    return this->X;
+}
+
+int location::getY()
+{
+    return this->Y;
+}
+
+
+int location::getCode()
+{
+    return this->code;
+}

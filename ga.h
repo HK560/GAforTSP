@@ -11,6 +11,7 @@ public:
     GA();
     void init_races(int size,int num);
     void debugInitRaces();
+    void getPathLength(QVector<int>path, int num);
 
 private:
     QVector<location> loc;

@@ -13,6 +13,9 @@ public:
     location();
     location(int code,int X,int Y);
     void qdebugLocation();
+    int getX();
+    int getY();
+    int getCode();
 };
 
 #endif // LOCATION_H

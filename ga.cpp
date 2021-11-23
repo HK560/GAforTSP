@@ -66,3 +66,12 @@ void GA::debugInitRaces()
         debug<<"]";
     }
 }
+
+void GA::getPathLength(QVector<int>path, int num)
+{
+    int pathLength=0;
+    for(int k=0;k<num;k=k+2){
+        pathLength+=sqrt(pow(qAbs((this->loc[path[k]].getX())-(this->loc[path[k+1]].getX())),2)+pow(qAbs((this->loc[path[k]].getY())-(this->loc[path[k+1]].getY())),2));
+        qDebug()<<"nowpath:"<<pathLength;
+    }
+}
