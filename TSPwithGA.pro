@@ -1,5 +1,5 @@
 QT       += core gui
-
+QT  += charts
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
@@ -12,14 +12,12 @@ SOURCES += \
     ga.cpp \
     location.cpp \
     main.cpp \
-    mainwindow.cpp \
-    tsp.cpp
+    mainwindow.cpp
 
 HEADERS += \
     ga.h \
     location.h \
-    mainwindow.h \
-    tsp.h
+    mainwindow.h
 
 FORMS += \
     mainwindow.ui

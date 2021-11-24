@@ -8,7 +8,7 @@ class location
 private:
     int X;
     int Y;
-    int code;
+    int code;//地点代号
 public:
     location();
     location(int code,int X,int Y);

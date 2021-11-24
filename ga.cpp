@@ -1,7 +1,7 @@
 #include "ga.h"
 
 GA::GA()
-{
+{//初始化，添加地点信息
     loc.append(location(1,87,7));
     loc.append(location(2,91,38));
     loc.append(location(3,83,46));
@@ -36,8 +36,8 @@ GA::GA()
 
 void GA::init_races(int size,int num)
 {
-
-
+    Q_ASSERT(this->pool==nullptr);
+    this->pool=new QVector<QVector<int>>;
     for(int i=0;i<size;i++){
         QVector<int> now;
         int tmprand;
@@ -51,21 +51,21 @@ void GA::init_races(int size,int num)
             tmp[tmprand]=true;
             now.append(tmprand);
         }
-        this->initRaces.append(now);
+        this->pool->append(now);
     }
 }
 
-void GA::debugInitRaces()
-{
-    for(auto i=initRaces.begin();i!=initRaces.end();i++){
-        QDebug debug=qDebug();
-        debug<<"[";
-        for(int k=0;k<i->size();k++){
-            debug<<i->at(k);
-        }
-        debug<<"]";
-    }
-}
+//void GA::debugInitRaces()
+//{
+//    for(auto i=initRaces.begin();i!=initRaces.end();i++){
+//        QDebug debug=qDebug();
+//        debug<<"[";
+//        for(int k=0;k<i->size();k++){
+//            debug<<i->at(k);
+//        }
+//        debug<<"]";
+//    }
+//}
 
 void GA::debugPool()
 {
@@ -105,21 +105,25 @@ int GA::getPathLength(QVector<int>path, int num)
     return pathLength;
 }
 
-void GA::tournament(int size,int num)
+void GA::tournament( int size,int num)
 {
     qDebug()<<"tournament";
     Q_ASSERT(size>0);
-    this->pool=new QVector<QVector<int>>;
+//    this->pool=new QVector<QVector<int>>;
+
+    QVector<QVector<int>> *newpool=new QVector<QVector<int>>;
     int time=size;
     while(time--){
         int index_1=QRandomGenerator::system()->bounded(size);
         int index_2=QRandomGenerator::system()->bounded(size);
-        if(getPathLength(this->initRaces[index_1],num)>getPathLength(this->initRaces[index_2],num)){
-            this->pool->append(this->initRaces[index_1]);
+        if(getPathLength(this->pool->at(index_1),num)<getPathLength(this->pool->at(index_2),num)){
+            newpool->append(this->pool->at(index_1));
         }else{
-            this->pool->append(this->initRaces[index_2]);
+            newpool->append(this->pool->at(index_2));
         }
     }
+    delete this->pool;
+    this->pool=newpool;
     debugPool();
 }
 
@@ -135,7 +139,7 @@ void GA::getRandomSwitchPoint(int &p1,int &p2,int num)
     p2=tmp2;
 }
 
-void GA::crossover(int size,int num,double pc)
+void GA::crossover(int size,int num,double pc,double pm)
 {
     Q_ASSERT(this->pool->size()>0);
     Q_ASSERT(size>0&&num>0);
@@ -169,15 +173,26 @@ void GA::crossover(int size,int num,double pc)
             }
             debugPath(tmpPath_1);
             debugPath(tmpPath_2);
-            removeDuplicates(tmpPath_1,tmpPath_2,size);
+            removeDuplicates(tmpPath_1,tmpPath_2);
+            double randPM=double(QRandomGenerator::system()->bounded(1.0));
+            if(randPM<pm){
+                qDebug()<<"mutations";
+                mutations(tmpPath_1,num);
+                mutations(tmpPath_2,num);
+                debugPath(tmpPath_1);
+                debugPath(tmpPath_2);
+            }
+
             newPool->append(tmpPath_1);
             newPool->append(tmpPath_2);
         }
     }
+    delete pool;
+    pool=newPool;
 
 }
 
-void GA::removeDuplicates(QVector<int> &path_1, QVector<int> &path_2,int size)
+void GA::removeDuplicates(QVector<int> &path_1, QVector<int> &path_2)
 {
     qDebug()<<"removeDuplicates";
     QVector<int> duplicates_1;
@@ -196,24 +211,26 @@ void GA::removeDuplicates(QVector<int> &path_1, QVector<int> &path_2,int size)
                 duplicates_2.append(*i);
         }
     }
-    int rr=duplicates_1[0];
-    debugPath(duplicates_1);
-    debugPath(duplicates_2);
-    qDebug()<<rr;
-    Q_ASSERT(duplicates_1.size()==duplicates_2.size());
-    for(int i=0;i<duplicates_1.size();i++){
-        int tmp= path_1[path_1.indexOf(duplicates_1[i])];
-        path_1[path_1.indexOf(duplicates_1[i])]=duplicates_2[i];
-        path_2[path_2.indexOf(duplicates_2[i])]=tmp;
+    if(duplicates_1.size()>0){
+        debugPath(duplicates_1);
+        debugPath(duplicates_2);
+        Q_ASSERT(duplicates_1.size()==duplicates_2.size());
+        for(int i=0;i<duplicates_1.size();i++){
+            int tmp= path_1[path_1.indexOf(duplicates_1[i])];
+            path_1[path_1.indexOf(duplicates_1[i])]=duplicates_2[i];
+            path_2[path_2.indexOf(duplicates_2[i])]=tmp;
 
+        }
+        debugPath(path_1);
+        debugPath(path_2);
     }
-    debugPath(path_1);
-    debugPath(path_2);
+    //int rr=duplicates_1[0];
+
 
 
 }
 
-void GA::mutations(QVector<int> &path,int num)
+inline void GA::mutations(QVector<int> &path,int num)
 {
     int randIndex_1=QRandomGenerator::system()->bounded(num);
     int randIndex_2=QRandomGenerator::system()->bounded(num);
@@ -223,4 +240,31 @@ void GA::mutations(QVector<int> &path,int num)
         path[randIndex_2]=tmp;
     }
 
+}
+
+int GA::getMinPathInPool(int num,QVector<int> &minPath)
+{
+    int min=INT32_MAX;
+
+    for(auto i= this->pool->begin();i!=this->pool->end();i++){
+        int pathvalue=getPathLength(*i,num);
+        if(pathvalue<min){
+            minPath=*i;
+            min=pathvalue;
+            this->minPath=*i;
+        }
+    }
+    return min;
+}
+
+QString GA::outputPath(QVector<int> path)
+{
+    QString output;
+    output.append("[");
+    for(auto i= path.begin();i!=path.end();i++){
+        output.append(QString::number(this->loc[*i].getCode()));
+        output.append(" ");
+    }
+    output.append("]");
+    return output;
 }
