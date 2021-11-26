@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pcEdit->setText("0.5");
     ui->pmEdit->setText("0.3");
     ui->sizeEdit->setText("20");
+
 }
 
 MainWindow::~MainWindow()
@@ -73,7 +74,7 @@ void MainWindow::on_resultBtn_clicked()//
         QChart *chart = new QChart();
         chart->legend()->hide();
         chart->createDefaultAxes();
-        chart->setTitle(QString("遗传算法解决旅行社问题 PC:%1 PM:%2").arg(pc).arg(pm));
+        chart->setTitle(QString("遗传算法解决旅行商问题 PC:%1 PM:%2").arg(pc).arg(pm));
         QValueAxis *aX=new QValueAxis;
         QValueAxis *aY=new QValueAxis;
         aX->setTitleText("次数");
@@ -93,7 +94,9 @@ void MainWindow::on_resultBtn_clicked()//
         chartV->setCentralWidget(chartView);
         chartV->resize(800, 500);
         chartV->show();
+//        QVector<int>da={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29};
 
+//        QMessageBox::warning(this,"",QString::number(tsp.getPathLength(da,30)),QMessageBox::Ok);
         //loadingDialog->close();
     }  catch (QString warningInfo) {
         QMessageBox::warning(this,"警告",warningInfo);

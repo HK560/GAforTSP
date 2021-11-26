@@ -92,15 +92,18 @@ void GA::debugPath(QVector<int> path)
     debug<<"]";
 }
 
-int GA::getPathLength(QVector<int>path, int num)
+double GA::getPathLength(QVector<int>path, int num)
 {
     qDebug()<<"getpathlength";
     Q_ASSERT(num==path.size());
-    int pathLength=0;
-    for(int k=0;k<path.size();k=k+2){
+    double pathLength=0;
+    for(int k=0;k<path.size()-1;k++){
         pathLength+=sqrt(pow(qAbs((this->loc[path[k]].getX())-(this->loc[path[k+1]].getX())),2)+pow(qAbs((this->loc[path[k]].getY())-(this->loc[path[k+1]].getY())),2));
-
+//        pathLength+=qAbs((this->loc[path[k]].getX())-(this->loc[path[k+1]].getX()))+qAbs((this->loc[path[k]].getY())-(this->loc[path[k+1]].getY()));
     }
+//    int end=path.last()
+//    pathLength+=qAbs((this->loc[path.last()].getX())-(this->loc[path.first()].getX()))+qAbs((this->loc[path.last()].getY())-(this->loc[path.first()].getY()));
+    pathLength+=sqrt(pow(qAbs((this->loc[path.last()].getX())-(this->loc[path.first()].getX())),2)+pow(qAbs((this->loc[path.last()].getY())-(this->loc[path.first()].getY())),2));
     qDebug()<<"nowpath:"<<pathLength;
     return pathLength;
 }
@@ -242,12 +245,12 @@ inline void GA::mutations(QVector<int> &path,int num)
 
 }
 
-int GA::getMinPathInPool(int num,QVector<int> &minPath)
+double GA::getMinPathInPool(int num,QVector<int> &minPath)
 {
     int min=INT32_MAX;
 
     for(auto i= this->pool->begin();i!=this->pool->end();i++){
-        int pathvalue=getPathLength(*i,num);
+        double pathvalue=getPathLength(*i,num);
         if(pathvalue<min){
             minPath=*i;
             min=pathvalue;
