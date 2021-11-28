@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QLineSeries>
 #include <QValueAxis>
-#include <QAbstractAxis>
+
 #include <QChartView>
 #include <QChart>
 #include<QDebug>

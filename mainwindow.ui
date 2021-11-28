@@ -79,7 +79,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>输入PM概率：</string>
+           <string>输入概率PM：</string>
           </property>
          </widget>
         </item>
@@ -147,7 +147,7 @@
         <item>
          <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>种群规模</string>
+           <string>种群规模:</string>
           </property>
          </widget>
         </item>
@@ -241,7 +241,7 @@
      <x>0</x>
      <y>0</y>
      <width>332</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

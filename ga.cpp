@@ -108,19 +108,17 @@ double GA::getPathLength(QVector<int>path, int num)
     return pathLength;
 }
 
-void GA::tournament( int size,int num)
+void GA::tournament( int size,int num)//锦标赛选择新交配池
 {
     qDebug()<<"tournament";
     Q_ASSERT(size>0);
-//    this->pool=new QVector<QVector<int>>;
-
-    QVector<QVector<int>> *newpool=new QVector<QVector<int>>;
+    QVector<QVector<int>> *newpool=new QVector<QVector<int>>;//新池子
     int time=size;
     while(time--){
-        int index_1=QRandomGenerator::system()->bounded(size);
+        int index_1=QRandomGenerator::system()->bounded(size);//随机数
         int index_2=QRandomGenerator::system()->bounded(size);
-        if(getPathLength(this->pool->at(index_1),num)<getPathLength(this->pool->at(index_2),num)){
-            newpool->append(this->pool->at(index_1));
+        if(getPathLength(this->pool->at(index_1),num)<getPathLength(this->pool->at(index_2),num)){//比较路径长度
+            newpool->append(this->pool->at(index_1));//将该路径加入到新池子
         }else{
             newpool->append(this->pool->at(index_2));
         }
@@ -129,7 +127,7 @@ void GA::tournament( int size,int num)
     this->pool=newpool;
     debugPool();
 }
-
+//获得两个符合规则的交叉点
 void GA::getRandomSwitchPoint(int &p1,int &p2,int num)
 {
     //Q_ASSERT(p1>=0&&p2>=0);
@@ -141,34 +139,38 @@ void GA::getRandomSwitchPoint(int &p1,int &p2,int num)
     p1=tmp1;
     p2=tmp2;
 }
-
+//二点交叉
 void GA::crossover(int size,int num,double pc,double pm)
 {
     Q_ASSERT(this->pool->size()>0);
     Q_ASSERT(size>0&&num>0);
     Q_ASSERT(pc>=0&&pc<=1);
-    QVector<QVector<int>>* newPool=new  QVector<QVector<int>>;
+    QVector<QVector<int>>* newPool=new  QVector<QVector<int>>;//新池子
     int time=size;
     while (time--) {
+        //随机取出两个路径个体
         int rand_1=QRandomGenerator::system()->bounded(size);
         int rand_2=QRandomGenerator::system()->bounded(size);
         QVector<int> tmpPath_1=this->pool->at(rand_1);
         QVector<int> tmpPath_2=this->pool->at(rand_2);
         debugPath(tmpPath_1);
         debugPath(tmpPath_2);
+        //生成一个0~1.0的随机数,如果大于给定的PC值则不交配,否则交配
         double randPC=double(QRandomGenerator::system()->bounded(1.0));
         qDebug()<<"randpc:"<<randPC;
         Q_ASSERT(randPC<1&&rand()>=0);
-        if(randPC<pc){
-            qDebug()<<"directADD";
+        if(randPC>pc){
+            qDebug()<<"不交配";
             newPool->append(tmpPath_1);
             newPool->append(tmpPath_2);
         }else{
-            qDebug()<<"jiaocha";
+            qDebug()<<"交配";
             int crossPos_1,crossPos_2;
+            //获得交叉点
             getRandomSwitchPoint(crossPos_1,crossPos_2,size);
             Q_ASSERT(crossPos_2>crossPos_1);
            // QVector<int> tmpp;
+            //交换
             for(int i=crossPos_1;i<crossPos_2;i++){
                 int tmppp=tmpPath_1[i];
                 tmpPath_1[i]=tmpPath_2[i];
@@ -176,6 +178,7 @@ void GA::crossover(int size,int num,double pc,double pm)
             }
             debugPath(tmpPath_1);
             debugPath(tmpPath_2);
+            //去除重复
             removeDuplicates(tmpPath_1,tmpPath_2);
             double randPM=double(QRandomGenerator::system()->bounded(1.0));
             if(randPM<pm){
@@ -185,7 +188,6 @@ void GA::crossover(int size,int num,double pc,double pm)
                 debugPath(tmpPath_1);
                 debugPath(tmpPath_2);
             }
-
             newPool->append(tmpPath_1);
             newPool->append(tmpPath_2);
         }
@@ -194,26 +196,27 @@ void GA::crossover(int size,int num,double pc,double pm)
     pool=newPool;
 
 }
-
+//去除重复
 void GA::removeDuplicates(QVector<int> &path_1, QVector<int> &path_2)
 {
     qDebug()<<"removeDuplicates";
+    //找出第一个个体的重复基因
     QVector<int> duplicates_1;
     for(auto i=path_1.begin();i!=path_1.end();i++){
-//        Q_ASSERT(i<size&&i>=0);
         if(path_1.count(*i)>1){
             if(duplicates_1.contains(*i)==false)
                 duplicates_1.append(*i);
         }
     }
+    //找出第二个个体的重复基因
     QVector<int> duplicates_2;
     for(auto i=path_2.begin();i!=path_2.end();i++){
-        //Q_ASSERT(*i<size&&*i>=0);
         if(path_2.count(*i)>1){
             if(duplicates_2.contains(*i)==false)
                 duplicates_2.append(*i);
         }
     }
+    //交换重复的基因
     if(duplicates_1.size()>0){
         debugPath(duplicates_1);
         debugPath(duplicates_2);
@@ -227,12 +230,8 @@ void GA::removeDuplicates(QVector<int> &path_1, QVector<int> &path_2)
         debugPath(path_1);
         debugPath(path_2);
     }
-    //int rr=duplicates_1[0];
-
-
-
 }
-
+//变异
 inline void GA::mutations(QVector<int> &path,int num)
 {
     int randIndex_1=QRandomGenerator::system()->bounded(num);
