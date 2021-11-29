@@ -35,16 +35,10 @@ void MainWindow::on_resultBtn_clicked()//
             throw QString("输入值非法");
         }
 
-//        QMessageBox *loadingDialog=new QMessageBox;
-//        loadingDialog->setWindowFlags(Qt::CustomizeWindowHint|Qt::WindowStaysOnTopHint);
-//        loadingDialog->setModal(false);
-//        loadingDialog->exec();
-
         GA tsp;
         int path;
 
         tsp.init_races(size,30);//生成随机初始种群
-        //    tsp.debugInitRaces();
 
         QLineSeries *series = new QLineSeries();
 
@@ -74,7 +68,7 @@ void MainWindow::on_resultBtn_clicked()//
         QChart *chart = new QChart();
         chart->legend()->hide();
         chart->createDefaultAxes();
-        chart->setTitle(QString("遗传算法解决旅行商问题 PC:%1 PM:%2").arg(pc).arg(pm));
+        chart->setTitle(QString("遗传算法解决旅行商问题 PC:%1 PM:%2 种群规模:%3").arg(pc).arg(pm).arg(size));
         QValueAxis *aX=new QValueAxis;
         QValueAxis *aY=new QValueAxis;
         aX->setTitleText("次数");
