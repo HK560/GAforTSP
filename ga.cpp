@@ -167,7 +167,7 @@ void GA::crossover(int size,int num,double pc,double pm)
             qDebug()<<"交配";
             int crossPos_1,crossPos_2;
             //获得交叉点
-            getRandomSwitchPoint(crossPos_1,crossPos_2,size);
+            getRandomSwitchPoint(crossPos_1,crossPos_2,num);
             Q_ASSERT(crossPos_2>crossPos_1);
            // QVector<int> tmpp;
             //交换
